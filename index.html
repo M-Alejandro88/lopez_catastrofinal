@@ -1,0 +1,107 @@
+
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Geovisor creado por Ing. López Manuel</title>
+  <!-- Creacion OpenLayers -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.4.0/ol.css">
+<center><style> #map {width: 50%;height: 400px;margin: 20px 0;}  </style><center>
+</head>
+<body>
+  <!-- Logo centrado -->
+  <center><img src="https://upload.wikimedia.org/wikipedia/commons/b/bf/Marca_UCuenca_2021_Fondo_Blanco_%281%29.png" height="150" alt="Logo Universidad de Cuenca"></center>
+  <!-- Título -->
+  <center><h1>Geovisor Tarea 2 López</h1></center>
+  <!-- Descripción de la tarea -->
+  <p><strong>Tarea 2: Numeral 3.3.</strong> Se debe generar una aplicación en HTML que permita visualizar los datos y descargarlos.</p>
+  <!-- Enlace a Geoserver -->
+  <a href="https://geoserver.idesinde.com:8443/geoserver/lopez/wms?service=WMS&version=1.1.0&request=GetMap&layers=lopez:Catastro%20Cuenca&bbox=721049.100000243,9679632.6,721673.60000025,9680133.4&width=768&height=615&srs=EPSG:32717&styles=&format=application/openlayers" target="_blank"> Link a Visor Geoserver </a>
+  <!-- Contenedor del mapa -->
+  <div id="map"></div>
+  <!-- Bibliotecas necesarias -->
+  <script src="https://cdn.jsdelivr.net/npm/proj4@2.7.5/dist/proj4.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ol@v7.4.0/dist/ol.js"></script>
+  <script>
+    // Definir la proyección EPSG:32717
+    proj4.defs("EPSG:32717", "+proj=utm +zone=17 +south +datum=WGS84 +units=m +no_defs");
+    ol.proj.proj4.register(proj4);
+
+    // Crear el mapa con Open Layers
+    const map = new ol.Map({
+      target: 'map',
+      layers: [
+        new ol.layer.Tile({
+          source: new ol.source.TileWMS({
+            url: 'https://geoserver.idesinde.com:8443/geoserver/lopez/wms',
+            params: {
+              'LAYERS': 'lopez:Catastro Cuenca',
+              'TILED': true,
+              'VERSION': '1.1.0',
+              'FORMAT': 'image/png',
+              'SRS': 'EPSG:32717'
+            },
+            serverType: 'geoserver',
+            projection: 'EPSG:32717'
+          })
+        })
+      ],
+      view: new ol.View({
+        projection: 'EPSG:32717',
+        center: [721361.35, 9680000],
+        zoom: 15
+      })
+    });
+  </script>
+<!-- Descarga Geoserver -->
+<p><strong>Click en el boton para descargar Mapa</strong> Datos catastrales Cuenca (predios y construcciones).</p>
+<a href="https://geoserver.idesinde.com:8443/geoserver/lopez/wms/kml?layers=lopez%3ACatastro%20Cuenca" target="_blank">
+  <button style="
+    background-color: blue;
+    color: white;
+    font-size: 1.5em;      /* Aumenta el tamaño del texto */
+    padding: 20px 40px;    /* Aumenta el tamaño del botón */
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  ">
+    Descargar capa en KML
+  </button>
+</a>
+<!-- INICIO: Capa base OpenStreetMap -->
+<script>
+  // Crear el mapa con OpenLayers
+  const map = new ol.Map({
+    target: 'map',
+    layers: [
+      // Capa base: OpenStreetMap
+      new ol.layer.Tile({
+        source: new ol.source.OSM()
+      }),
+
+      // Capa WMS desde GeoServer
+      new ol.layer.Tile({
+        source: new ol.source.TileWMS({
+          url: 'https://geoserver.idesinde.com:8443/geoserver/lopez/wms',
+          params: {
+            'LAYERS': 'lopez:Catastro Cuenca',
+            'TILED': true,
+            'VERSION': '1.1.0',
+            'FORMAT': 'image/png',
+            'SRS': 'EPSG:32717'
+          },
+          serverType: 'geoserver'
+        })
+      })
+    ],
+    view: new ol.View({
+      projection: 'EPSG:3857', // Cambiado para coincidir con OSM
+      center: ol.proj.fromLonLat([-78.9996, -2.8972]), // Coordenadas de Cuenca, Ecuador transformadas a EPSG:3857
+      zoom: 15
+    })
+  });
+</script>
+<!-- FIN: Capa base OpenStreetMap -->
+
+</body>
+</html>
+
