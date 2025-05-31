@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<!-- INICIO HEAD -->
+<head><meta charset="UTF-8"><title>Geovisor creado por Ing. López Manuel</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.4.0/ol.css">
+<style>#map { width: 50%; height: 400px; margin: 20px auto; }</style>
+</head>
+<!-- FIN HEAD -->
+<!-- INICIO BODY -->
+<body>
+  <!-- INICIO LOGO Y TÍTULO -->
+  <center><img src="https://upload.wikimedia.org/wikipedia/commons/b/bf/Marca_UCuenca_2021_Fondo_Blanco_%281%29.png" height="150" alt="Logo Universidad de Cuenca">
+    <h1>Geovisor Tarea 2 López</h1></center>
+  <!-- FIN LOGO Y TÍTULO -->
+  <!-- INICIO DESCRIPCIÓN -->
+  <center><p><strong>Tarea 2: Numeral 3.3.</strong> Se debe generar una aplicación en HTML que permita visualizar los datos y descargarlos.</p></center>
+  <!-- FIN DESCRIPCIÓN -->
+  <!-- INICIO LINK VISOR GEOSERVER -->
+  <center><a href="https://geoserver.idesinde.com:8443/geoserver/lopez/wms?service=WMS&version=1.1.0&request=GetMap&layers=lopez:Catastro%20Cuenca&bbox=721049.100000243,9679632.6,721673.60000025,9680133.4&width=768&height=615&srs=EPSG:32717&styles=&format=application/openlayers" target="_blank">Link a Visor Geoserver</a></center>
+  <!-- FIN LINK VISOR GEOSERVER -->
+  <!-- INICIO MAPA -->
+  <div id="map"></div>
+  <!-- FIN MAPA -->
+  <!-- INICIO LIBRERÍAS JS -->
+  <script src="https://cdn.jsdelivr.net/npm/proj4@2.7.5/dist/proj4.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ol@v7.4.0/dist/ol.js"></script>
+  <!-- FIN LIBRERÍAS JS -->
+  <!-- INICIO SCRIPT DEL MAPA -->
+  <script>
+    proj4.defs("EPSG:32717", "+proj=utm +zone=17 +south +datum=WGS84 +units=m +no_defs");
+    ol.proj.proj4.register(proj4);
+    const map = new ol.Map({
+      target: 'map',
+      layers: [
+        new ol.layer.Tile({ source: new ol.source.OSM() }),
+        new ol.layer.Tile({
+          source: new ol.source.TileWMS({
+            url: 'https://geoserver.idesinde.com:8443/geoserver/lopez/wms',
+            params: { 'LAYERS': 'lopez:Catastro Cuenca', 'TILED': true, 'VERSION': '1.1.0', 'FORMAT': 'image/png', 'SRS': 'EPSG:32717' },
+            serverType: 'geoserver'
+          }),
+          opacity: 0.6
+        })
+      ],
+      view: new ol.View({
+        projection: 'EPSG:3857',
+        center: ol.proj.fromLonLat([-78.9996, -2.8972]),
+        zoom: 15
+      })
+    });
+  </script>
+  <!-- FIN SCRIPT DEL MAPA -->
+  <!-- INICIO DESCARGA KML -->
+  <center><p><strong>Click en el botón para descargar Mapa:</strong> Datos catastrales Cuenca (predios y construcciones).</p></center>
+  <a href="https://geoserver.idesinde.com:8443/geoserver/lopez/wms/kml?layers=lopez%3ACatastro%20Cuenca" target="_blank">
+    <center><button style="background-color: blue; color: white; font-size: 1.5em; padding: 20px 40px; border: none; border-radius: 10px; cursor: pointer;">Descargar capa en KML</button>
+  </a></center>
+  <!-- FIN DESCARGA KML -->
+
+</body>
+<!-- FIN BODY -->
+</html>
